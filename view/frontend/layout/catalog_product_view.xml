@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance dc" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<body>
+    <referenceBlock name="product.info.review">
+        <action method="setTemplate">
+            <argument name="template" xsi:type="string">Esparksinc_Extension::counter.phtml</argument>    
+        </action>
+    </referenceBlock>
+	<referenceBlock name="product.info.review" remove="true" />
+	<referenceContainer name="content">
+        <container name="product.custom" htmlTag="div" htmlClass="product-info-main" before="-">
+            <block class="Magento\Catalog\Block\Product\View" name="product.custom.reivew" template="Esparksinc_Extension::counter.phtml" />
+        </container>
+    </referenceContainer>
+    <move element="product.custom.reivew" destination="product.info.main" before="product.info"/>
+	</body>
+</page>

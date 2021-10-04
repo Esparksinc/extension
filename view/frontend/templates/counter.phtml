@@ -1,0 +1,147 @@
+<?php
+$helper = $block->getHelper();
+    /**
+     *  Get Extension Status Enable(Yes) ||Disable(No).
+     */
+$extensionStatus = $helper->getConfig('Extension/general/enableDisable');
+    /**
+     *  Get ProductView Enable(Yes) ||Disable(No).
+     */
+$extensionView=$helper->getConfig('Extension/general/productview');
+    /**
+     *  Get ProductQuantity Enable(Yes) ||Disable(No).
+     */
+$extensionQuantity=$helper->getConfig('Extension/general/productqty');
+    /**
+     *  Get ProductOrder Enable(Yes) ||Disable(No).
+     */
+$extensionOrder=$helper->getConfig('Extension/general/productorder');
+    /**
+     *  Get Product Type (Simple Or Configrable) By ProductID
+     */
+
+$_productType=$block->getProductType($block->getProduct()->getId());
+?>
+<?php if ($_productType==1) : ?>
+    <?php if ($extensionStatus=="1") : ?> 
+        <?php if ($extensionQuantity=="1") : ?> 
+<span class="pairs-left"><b>PAIR LEFT: <span class="show-pairs-left"></span></b></span>
+        <?php endif; ?>
+</br>
+        <?php if ($extensionOrder=="1") : ?>
+<span class="order-times"><b>ORDER COUNT: <span class="show-order-time"></span></b></span>
+    <?php endif; ?>
+        <?php if ($extensionView=="1") : ?>
+<span style="float:right;"><b>VIEWS: <?=/*@noEscape*/ $block->viewCount($block->getProduct()->getId()); ?></b></span>
+    <?php endif; ?>
+    <?php endif; ?>
+<?php else : ?>
+    <?php if ($extensionStatus=="1") : ?> 
+        <?php if ($extensionQuantity=="1") : ?> 
+<span><b>PAIR LEFT: <span>
+            <?php
+            $_productStock=$block->getStockItem($block->getProduct()->getId());
+    /* @noEscape */echo $_productStock->getQty();
+            ?> 
+</span></b></span>
+        <?php endif; ?>
+</br>
+        <?php if ($extensionOrder=="1") : ?> 
+<span><b>ORDER TIMES: <?=/*@noEscape*/ $block->getProductOrder($block->getProduct()->getId()); ?></b></span>
+    <?php endif; ?>
+        <?php if ($extensionView=="1") : ?> 
+<span style="float:right;"><b>VIEWS: <?=/*@noEscape*/ $block->viewCount($block->getProduct()->getId()); ?></b></span>
+    <?php endif; ?>
+    <?php endif; ?>
+<?php endif; ?>
+<script type="text/javascript">
+requirejs(['jquery','underscore'], function(jQuery,_){
+        jQuery(".pairs-left").hide();
+        jQuery(".order-times").hide();         
+        jQuery(".product-options-wrapper div" ).click(function() {
+            <?php if ($extensionStatus=="1") : ?> 
+            selpro();
+            <?php endif; ?>
+        });
+    function selpro () {
+       
+        jQuery(".product-options-wrapper select[id^='attribute']").last().on('change', function() {
+        setTimeout(function (){
+        simpleId=jQuery("input[name=selected_configurable_option]").val();
+       
+        if(simpleId!=null){////when size and color both are selected
+            var customurl = "<?= /* @noEscape */ $this->getUrl().'extensions/index/index'?>";
+            jQuery.ajax({
+            url: customurl,
+            type: 'POST',
+            data: {
+            SelectedProductID: simpleId,
+            },
+            success: function(response) {
+                jQuery(".pairs-left").show();
+                jQuery(".order-times").show();
+                jQuery('.show-pairs-left').html(response.stock);
+                jQuery('.show-order-time').html(response.order);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log(xhr);
+                }
+            });
+        }
+       }, 500); 
+     });
+
+    if (jQuery(".product-options-wrapper div").hasClass('swatch-option'))
+        {
+        var selected_options = {};
+        jQuery('div.swatch-attribute').each(function(k,v){
+            var attribute_id = jQuery(v).attr('data-attribute-id');
+            if(attribute_id === undefined )
+            {
+                attribute_id = jQuery(v).attr('attribute-id');
+            } 
+            var option_selected = jQuery(v).attr('data-option-selected');
+            if(option_selected === undefined )
+            {
+                option_selected = jQuery(v).attr('option-selected');
+            } 
+            if(!attribute_id || !option_selected){return;}
+            selected_options[attribute_id] = option_selected;
+        });
+        var product_id_index = jQuery('[data-role=swatch-options]').data('mageSwatchRenderer').options.jsonConfig.index;
+        var found_ids = []; //array for save ids of seected product
+        
+        jQuery.each(product_id_index, function(product_id,attributes){
+            var productIsSelected = function(attributes, selected_options){
+                return _.isEqual(attributes, selected_options);
+            }
+            if(productIsSelected(attributes, selected_options)){    
+                found_ids.push(product_id);
+            } 
+        });
+       
+         
+        if(found_ids.length!=0){ //when size and color both are selected
+          var customurl = "<?= /*@noEscape*/ $this->getUrl().'extensions/index/index'?>";
+          jQuery.ajax({
+                url: customurl,
+                type: 'POST',
+                data: {
+                    SelectedProductID: found_ids,
+                },
+            success: function(response) {
+                jQuery(".pairs-left").show();
+                jQuery(".order-times").show();
+                jQuery('.show-pairs-left').html(response.stock);
+                jQuery('.show-order-time').html(response.order);
+                },
+                error: function (xhr, status, errorThrown) {
+                    console.log(xhr);
+                }
+            });
+        }
+    } 
+  }
+});
+ </script>
+ 

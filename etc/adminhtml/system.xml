@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="Esparksinc" translate="label" sortOrder="10">
+            <label>Esparksinc</label>
+        </tab>
+        <section id="Extension" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Inventory Counter</label>
+            <tab>Esparksinc</tab>
+            <resource>Esparksinc_Extension::Extension_config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Configuration</label>
+                <field id="enableDisable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1"  showInStore="1">
+                    <label>Inventory Counter Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="productview" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1"  showInStore="1">
+                    <label>Product Views Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enableDisable">1</field>
+                    </depends>
+                </field>
+                <field id="productorder" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1"  showInStore="1">
+                    <label>Product Ordered Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enableDisable">1</field>
+                    </depends>
+                </field>
+                <field id="productqty" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1"  showInStore="1">
+                    <label>Product Quantity Enable</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enableDisable">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
